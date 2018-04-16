@@ -1,54 +1,45 @@
-# Using prefetch and preload to improve our webpage speed
+# Using preconnect and preload to improve our webpage speed
+
+> Look at the `demo` directory for an example using `preload`
+
+Let's take a look at a basic HTML page. There is an HTML file, a CSS file, and a request to a font file hosted on akamai.
 
 ``` html
 <!-- index.html -->
 <html>
     <head>
-        <link href="./styles.css" rel="stylesheet" type="text/css" />
+        <link href="./styles.css" rel="stylesheet" type="text/css">
     </head>
 </html>
+```
 
-<!-- styles.css-->
-@import url('https://akama.hotwire.com/lato.woff');
+``` css
+/* styles.css */
+@import url('https://akamai.hotwire.com/lato.woff');
 
 body {
     font-family: Lato;
 }
 ```
 
-dns = 🔍
-connect = 🔌
-ssl = 👮
+Let's look at the network waterfall for this webpage.
 
-+----+----+----+----------------+
-| 🔍 | 🔌 | 👮 | 📄 hotwire.com  |
-+----+----+----+----------------+
+| Term | Symbol |
+| --- | --- |
+| dns | 🔍 |
+|connect | 🔌 |
+| ssl | 👮 |
 
-                                +---------------------------+
-                                | 🎨 hotwire.com/styles.css |
-                                +---------------------------+
+![Basic waterfall](./assets/carbon-1.png)
 
-                                                            +----+----+----+--------------------------------+
-                                                            | 🔍 | 🔌 | 👮 | 🖊️ akamai.hotwire.com/lato.woff |
-                                                            +----+----+----+--------------------------------+
+For each domain, our browser does a DNS search, connects to the server, and sets up a secure connection. This can lead to very long waterfalls.
 
-This is what our waterfall looks like. For each domain, our browser has to do a DNS search, Connect to the server, and then set up SSL. This can lead to very long waterfalls.
+We can shorten our waterfalls by using a `preconnect`. 
 
-We can shorten our waterfalls by using a `prefetch`. 
+![Waterfall with preconnect](./assets/carbon-2.png)
 
-+----+----+----+----------------+
-| 🔍 | 🔌 | 👮 | 📄 hotwire.com  |
-+----+----+----+----------------+
+# What does the code look like?
 
-                                +---------------------------+
-                                | 🎨 hotwire.com/styles.css |
-                                +---------------------------+
-
-                                +----+----+----+            +---------------------------------+
-                                | 🔍 | 🔌 | 👮  |            | 🖊️ akamai.hotwire.com/lato.woff |
-                                +----+----+----+            +---------------------------------+
-
-# How does the code look like?
 ``` html
 <html>
     <link href="akamai.hotwire.com" rel="preconnect" /> 
@@ -58,31 +49,17 @@ We can shorten our waterfalls by using a `prefetch`.
 
 There are other options, such as `preload` where you know the name of the asset.
 
-+----+----+----+----------------+
-| 🔍 | 🔌 | 👮 | 📄 hotwire.com  |
-+----+----+----+----------------+
-
-                                +---------------------------+
-                                | 🎨 hotwire.com/styles.css |
-                                +---------------------------+
-
-                                +----+----+----+---------------------------------+
-                                | 🔍 | 🔌 | 👮  | 🖊️ akamai.hotwire.com/lato.woff |
-                                +----+----+----+---------------------------------+
+![Waterfall with preload](./assets/carbon-3.png)
 
 # Real Waterfall
 [WebpageTest](https://www.webpagetest.org/result/180410_RQ_28bffb7761ca5a17071e157957cd3ac4/) for hotwire.com
 
 ![Waterfall from WebpageTest](./assets/waterfall.png)
 
-By doing the connection to akamai.hotwire.com earlier, we may be able to finish loading faster.
+By doing the connection to `akamai` earlier, we should be able to finish loading our page faster.
 
 ![Edited Waterfall from WebpageTest](./assets/waterfall-edit.png)
-
-If we do the Pre
 
 # Browser support
 [![caniuse - preconnect](./assets/caniuse-preconnect.png)](https://caniuse.com/#search=preconnect)
 [![caniuse - preload](./assets/caniuse-preload.png)](https://caniuse.com/#search=preload)
-
-> Feel free to look at the `demo` directory
