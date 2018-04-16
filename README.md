@@ -84,3 +84,5 @@ If we do the Pre
 # Browser support
 [![caniuse - preconnect](./assets/caniuse-preconnect.png)](https://caniuse.com/#search=preconnect)
 [![caniuse - preload](./assets/caniuse-preload.png)](https://caniuse.com/#search=preload)
+
+> Feel free to look at the `demo` directory
